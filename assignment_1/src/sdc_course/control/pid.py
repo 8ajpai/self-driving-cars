@@ -4,6 +4,7 @@ import numpy as np
 from sdc_course.utils.utility import *
 
 
+
 class PIDLongitudinalController:
     """
     PIDLongitudinalController implements longitudinal control using a PID.
@@ -54,6 +55,11 @@ class PIDLongitudinalController:
         #######################################################################
         ################## TODO: IMPLEMENT LONGITUDINAL PID CONTROL HERE ######
         #######################################################################
+        error = target_velocity_ms - current_velocity_ms
+        P = self._k_p * error
+        I = self._k_i * error * self._dt
+        D = self._k_d * (error /self._dt)
+        acceleration = P+I+D
         return acceleration
 
 
@@ -114,4 +120,26 @@ class PIDLateralController:
         ######################################################################
         ################## TODO: IMPLEMENT LATERAL PID CONTROL HERE ###########
         #######################################################################
+        x_wp = waypoints[0][0]
+        y_wp = waypoints[0][1]
+        x_car = vehicle_transform.location.x
+        y_car = vehicle_transform.location.y
+        cte = np.sqrt((y_wp-y_car)**2+(x_wp-x_car)**2) 
+        
+        #des_ang = math.atan((y_wp-y_car)/(x_wp-y_car))
+        #yaw_car = vehicle_transform.rotation.yaw
+        next_waypoint = get_nearest_waypoint(self._vehicle,waypoints)
+        v1 = [x_car - next_waypoint[0][0], y_car - next_waypoint[0][1] ]
+        v2 = [vehicle_transform.get_forward_vector().x,vehicle_transform.get_forward_vector().y]
+        #print(f" waypoints : {waypoints [0]}, Transform : {vehicle_transform}")
+        #print(f" Transform : {type(vehicle_transform.location.x)}")
+        P = self._k_p * cte 
+        I = self._k_i * cte * self._dt 
+        D = self._k_d * (cte /self._dt)
+        steering = -(P+I+D) * self._get_steering_direction(v1, v2)
+        if (steering>0.5):
+            steering = 0.5
+        elif (steering<-0.5):
+            steering = -0.5
+        print(f"{cte}, P : {P}, I : {I}, D: {D}")
         return steering

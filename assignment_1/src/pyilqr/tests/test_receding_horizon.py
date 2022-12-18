@@ -2,16 +2,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from matplotlib.animation import FuncAnimation, writers
-from ..pyilqr.costs import CompositeCost, QuadraticCost
-from ..pyilqr.example_costs import (
+from pyilqr.pyilqr.costs import CompositeCost, QuadraticCost
+from pyilqr.pyilqr.example_costs import (
     PolylineTrackingCost,
     SetpointTrackingCost,
     Polyline,
     SoftConstraintCost,
 )
-from ..pyilqr.example_dynamics import UnicycleDynamics, BicycleDynamics
-from ..pyilqr.ocp import OptimalControlProblem
-from ..pyilqr.receding_horizon import RecedingHorizonStrategy, ILQRSolver
+from pyilqr.pyilqr.example_dynamics import UnicycleDynamics, BicycleDynamics
+from pyilqr.pyilqr.ocp import OptimalControlProblem
+from pyilqr.pyilqr.receding_horizon import RecedingHorizonStrategy, ILQRSolver
 
 
 def test_receding_horizon_parking_unicycle():
@@ -163,5 +163,5 @@ def visual_sanity_check(f):
 
 
 if __name__ == "__main__":
-    visual_sanity_check(test_receding_horizon_path_following_bicycle)
-    # visual_sanity_check(test_receding_horizon_path_following_unicycle)
+    #visual_sanity_check(test_receding_horizon_path_following_bicycle)
+    visual_sanity_check(test_receding_horizon_path_following_unicycle)

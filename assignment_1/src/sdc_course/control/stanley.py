@@ -51,5 +51,25 @@ class StanleyLateralController:
         steering = 0.0
         #######################################################################
         ################## TODO: IMPLEMENT STANLEY CONTROL HERE ###############
-        #######################################################################
+        ###############################################################t########
+        # x_wp = waypoints[0][0]
+        # y_wp = waypoints[0][1]
+        # x_car = vehicle_transform.location.x
+        # y_car = vehicle_transform.location.y
+        # # vel_car_x = self._vehicle.get_velocity().x
+        # # vel_car_y = self._vehicle.get_velocity().y
+        # # vel_car_z = self._vehicle.get_velocity().z
+        # vel_car = get_velocity_ms(self._vehicle)
+        # next_waypoint = get_nearest_waypoint(self._vehicle,waypoints)
+        # print(f"type of wp : {next_waypoint}")
+        # steering = math.atan(self._k_cte/vel_car)*StanleyLateralController._get_cte_heading_error(self,vel_car,tuple(next_waypoint))
+    
+        waypoint, waypoint_index = get_nearest_waypoint(self._vehicle,waypoints)
+        heading_error = self._get_heading_error(waypoints, waypoint_index, vehicle_transform.rotation.yaw*np.pi/180 )
+        cte_heading_error = self._get_cte_heading_error(get_velocity_ms(self._vehicle), tuple(waypoint))
+        v1 = [vehicle_transform.location.x - waypoint[0] , vehicle_transform.location.y - waypoint[1]]
+        v2 = [vehicle_transform.get_forward_vector().x,vehicle_transform.get_forward_vector().y]
+        steering_direction = self._get_steering_direction(v1, v2)       
+        steering = steering_direction * cte_heading_error + heading_error
+
         return steering

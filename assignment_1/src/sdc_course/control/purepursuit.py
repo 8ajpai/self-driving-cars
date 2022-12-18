@@ -21,6 +21,7 @@ class PurePursuitLateralController:
         for i in range(len(waypoints)):
             dist = compute_distance_to_waypoint(vehicle, waypoints[i])
             if dist >= lookahead_dist:
+                #print(dist, max(0, i))
                 return max(0, i)
         return len(waypoints) - 1
 
@@ -39,7 +40,7 @@ class PurePursuitLateralController:
 
     def _pure_pursuit_control(self, waypoints, vehicle_transform):
         """
-        :param waypoint: list of waypoints
+        :param waypoint: list of waypointsld = self._k_pp*vel_car = get_velocity_ms(self._vehicle)
         :param vehicle_transform: current transform of the vehicle
         :return: steering control
         """
@@ -47,4 +48,32 @@ class PurePursuitLateralController:
         #######################################################################
         ################## TODO: IMPLEMENT PURE-PURSUIT CONTROL HERE ##########
         #######################################################################
+        
+        
+
+        x_car = vehicle_transform.location.x
+        y_car = vehicle_transform.location.y
+        car_yaw = vehicle_transform.rotation.yaw
+        vel_car = get_velocity_ms(self._vehicle)
+        #next_waypoint = get_nearest_waypoint(self._vehicle,waypoints)
+        ld = self._k_pp*vel_car 
+        #ld = self._ld
+        next_waypoint = PurePursuitLateralController._get_goal_waypoint_index(self,self._vehicle,waypoints,ld)
+        x_wp = waypoints[next_waypoint][0]
+        y_wp = waypoints[next_waypoint][1]
+        #print(x_wp,y_wp)
+        v1 = [x_car - waypoints[next_waypoint][0], y_car - waypoints[next_waypoint][1] ]
+        v2 = [vehicle_transform.get_forward_vector().x,vehicle_transform.get_forward_vector().y]
+        print(v1, v2)
+        #v_cross = np.cross(vehicle_transform.get_forward_vector().x, vehicle_transform.get_forward_vector().y) 
+        
+        v1_norm =np.linalg.norm(np.asarray(v1))
+        v2_norm = np.linalg.norm(np.asarray(v2))
+        alpha = np.arccos(np.dot(np.asarray(v1),np.asarray(v2))/np.dot(v1_norm,v2_norm))
+        print(alpha)
+        #cte = np.sqrt((y_wp-y_car)**2+(x_wp-x_car)**2) 
+        cte = ld*np.sin(-alpha)
+        kappa = (2 * cte)/ld**2
+        steering =  np.arctan(kappa*self._L) * self._get_steering_direction(v1, v2)
+        print(f" WP Index : {next_waypoint}, yaw : {car_yaw}, Delta : {steering}, Lookahead distance : {ld}")
         return steering

@@ -44,9 +44,36 @@ class ModelPredictiveController(AbstractController):
         :param waypoints: local trajectory waypoints
         :return: control command for the vehicle.
         """
+        
         steering = 0.0
         acceleration = 0.0
         #######################################################################
         ################## TODO: IMPLEMENT MPC CONTROL HERE ###################
         #######################################################################
+
+        #1. Model dynamics --> use unicycle 
+        # self.dt should define??
+        self.dt = 0.2
+        dyn = UnicycleDynamics(self.dt)
+        #x_car = vehicle_transform.location.x
+        #y_car = vehicle_transform.location.y
+        #car_yaw = vehicle_transform.rotation.yaw
+        #vel_car = get_velocity_ms(self._vehicle)
+
+        #transform = self.vehicle.get_transform()
+        print(Car.get_transform(self))
+        """ ILQR  -- 
+        # inputs: - Dynamic; UnicycleDynamics(self.dt)
+                  - State; x0 -- extract vehicle??
+                  - State_Cost -- SetpointTrackingCost(np.eye(4), x_target = np.array([1,1,0,0]) )
+                  - Input_Cost -- ocp = QuadraticCost(dynamics, State_Cost, Input_Cost, horizon)
+        # output: solver = ILQR(ocp) -- give x and u at time t
+        # """
+        # x0 = 
+        
+        #QuadraticCost
+        #dynamics = self.dynamics
+	    #simulation_horizon = 200
+	    #prediction_horizon = 20
+	    #x0 = np.array([0,0,0,0.5])
         return steering, acceleration
